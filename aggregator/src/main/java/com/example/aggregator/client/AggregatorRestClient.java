@@ -65,6 +65,19 @@ public class AggregatorRestClient {
                      .collect(Collectors.toList());
     }
 
+    @CircuitBreaker(name = "getWordsEndingWithCB", fallbackMethod = "fallbackGetWordsEndingWith")
+    public List<Entry> getWordsEndingWith(String chars) {
+
+        String uri = "http://localhost:9091/getWordsEndingWith/" + chars;
+
+        ResponseEntity<Entry[]> responseEntity = restTemplate.getForEntity(uri, Entry[].class);
+        Entry[] entryArray = responseEntity.getBody();
+
+        return Arrays.stream(entryArray)
+                .collect(Collectors.toList());
+    }
+
+
     // Fallback methods
     public Entry fallbackGetDefinitionFor(String word, Throwable t) {
         return new Entry(); // Return a default Entry or handle the fallback logic
